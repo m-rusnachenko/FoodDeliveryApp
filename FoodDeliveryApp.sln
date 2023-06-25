@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoodDeliveryApi", "FoodDeliveryApi\FoodDeliveryApi.csproj", "{8F760375-6A9D-4370-8392-DE2D911AAC0A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoodDeliveryApi", "FoodDeliveryApi\FoodDeliveryApi.csproj", "{65F2CD3F-E1E8-4568-BD03-9C71458BD208}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -8,10 +8,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8F760375-6A9D-4370-8392-DE2D911AAC0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8F760375-6A9D-4370-8392-DE2D911AAC0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8F760375-6A9D-4370-8392-DE2D911AAC0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8F760375-6A9D-4370-8392-DE2D911AAC0A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65F2CD3F-E1E8-4568-BD03-9C71458BD208}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65F2CD3F-E1E8-4568-BD03-9C71458BD208}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65F2CD3F-E1E8-4568-BD03-9C71458BD208}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65F2CD3F-E1E8-4568-BD03-9C71458BD208}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
