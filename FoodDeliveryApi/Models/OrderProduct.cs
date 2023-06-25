@@ -1,6 +1,6 @@
 ﻿namespace FoodDeliveryApi.Models;
 
-public class Shop
+public class OrderProduct
 {
     
 }
