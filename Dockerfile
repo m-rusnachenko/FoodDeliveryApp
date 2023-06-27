@@ -15,5 +15,6 @@ WORKDIR /app
 COPY --from=build /app ./
 
 # Run
-EXPOSE 5000
-ENTRYPOINT ["dotnet", "FoodDeliveryApi.dll"]
+# EXPOSE 5000
+# ENTRYPOINT ["dotnet", "FoodDeliveryApi.dll"]
+CMD ASPNETCORE_URLS=http://*:$PORT dotnet FoodDeliveryApi.dll
