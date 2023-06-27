@@ -1,5 +1,5 @@
 # Build stage
-FROM mcr.microsoft.com/dotnet/sdk:7.0-focal AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /source
 COPY . .
 
@@ -8,7 +8,7 @@ RUN dotnet restore "./FoodDeliveryApi/FoodDeliveryApi.csproj" --disable-parallel
 RUN dotnet publish "./FoodDeliveryApi/FoodDeliveryApi.csproj" -c Release -o /app --no-restore
 
 # Service stage
-FROM mcr.microsoft.com/aspnet:7.0-focal AS service
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS service
 WORKDIR /app
 
 # Copy build artifacts
