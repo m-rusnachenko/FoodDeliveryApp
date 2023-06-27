@@ -112,11 +112,12 @@ public class OrderService : IOrderService
             return serviceResponse;
         }
 
-        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == order.UserId);
-        user?.Orders.Remove(order);
+        // var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == order.UserId);
+        // user?.Orders.Remove(order);
 
-        var shop = await _dbContext.Shops.FirstOrDefaultAsync(s => s.Id == order.ShopId);
-        shop?.Orders.Remove(order);
+        // var shop = await _dbContext.Shops.FirstOrDefaultAsync(s => s.Id == order.ShopId);
+        // shop?.Orders.Remove(order);
+        _dbContext.OrderProducts.RemoveRange(order.Products);
         _dbContext.Orders.Remove(order);
         await _dbContext.SaveChangesAsync();
         serviceResponse.Data = _mapper.Map<GetOrderDto>(order);

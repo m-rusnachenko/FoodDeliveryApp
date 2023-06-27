@@ -24,8 +24,8 @@ namespace FoodDeliveryApi.Services.ProductsService
         {
             var serviceResponse = new ServiceResponse<GetProductDto>();
             var productToAdd = _mapper.Map<Product>(product);
-            var shop = await _dbContext.Shops.FindAsync(shopId);
-            if (productToAdd.Shop is null)
+            var shop = await _dbContext.Shops.Include(s => s.Products).FirstOrDefaultAsync(s => s.Id == shopId);
+            if (shop is null)
             {
                 serviceResponse.Success = false;
                 serviceResponse.Message = "Shop not found";
@@ -69,6 +69,48 @@ namespace FoodDeliveryApi.Services.ProductsService
             var serviceResponse = new ServiceResponse<List<GetProductDto>>();
             var products = await _dbContext.Products.Where(p => p.ShopId == shopId).ToListAsync();
             serviceResponse.Data = _mapper.Map<List<GetProductDto>>(products);
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<GetProductDto>> GetProductById(Guid shopId, Guid productId)
+        {
+            var serviceResponse = new ServiceResponse<GetProductDto>();
+            var product = await _dbContext.Products
+                .Include(p => p.Shop)
+                .FirstOrDefaultAsync(p => p.Id == productId && p.ShopId == shopId);
+            if (product is null)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "Product not found";
+                return serviceResponse;
+            }
+            serviceResponse.Data = _mapper.Map<GetProductDto>(product);
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<List<GetProductDto>>> UpdateProduct(Guid shopId, Guid productId, UpdateProductDto product)
+        {
+            var serviceResponse = new ServiceResponse<List<GetProductDto>>();
+            var shop = _dbContext.Shops.Include(s => s.Products).FirstOrDefault(s => s.Id == shopId);
+            if (shop is null)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "Shop not found";
+                return serviceResponse;
+            }
+            var productToUpdate = shop.Products.FirstOrDefault(p => p.Id == productId);
+            if (productToUpdate is null)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "Product not found";
+                return serviceResponse;
+            }
+            productToUpdate.Name = product.Name ?? productToUpdate.Name;
+            productToUpdate.Description = product.Description ?? productToUpdate.Description;
+            productToUpdate.Price = product.Price ?? productToUpdate.Price;
+            productToUpdate.ImageUrl = product.ImageUrl ?? productToUpdate.ImageUrl;
+            await _dbContext.SaveChangesAsync();
+            serviceResponse.Data = _mapper.Map<List<GetProductDto>>(shop.Products);
             return serviceResponse;
         }
 

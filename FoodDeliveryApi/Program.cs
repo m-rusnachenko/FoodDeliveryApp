@@ -14,8 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddDbContext<FoodDeliveryDbContext>(options =>
 {
-    // options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-    options.UseSqlite("Data Source=food-delivery-app.db");
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MsSql_Somee"));
+    // options.UseSqlite("Data Source=food-delivery-app.db");
     options.EnableSensitiveDataLogging(true);
 });
 
@@ -56,11 +56,11 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+// if (app.Environment.IsDevelopment())
+// {
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+// }
 
 app.UseHttpsRedirection();
 

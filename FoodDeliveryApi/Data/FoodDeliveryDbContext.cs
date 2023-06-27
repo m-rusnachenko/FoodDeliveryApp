@@ -14,6 +14,7 @@ public class FoodDeliveryDbContext : DbContext
     public DbSet<Product> Products => Set<Product>();
     public DbSet<User> Users => Set<User>();
     public DbSet<Order> Orders => Set<Order>();
+    public DbSet<OrderProduct> OrderProducts => Set<OrderProduct>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -26,6 +27,6 @@ public class FoodDeliveryDbContext : DbContext
             .HasOne(o => o.Shop)
             .WithMany(s => s.Orders)
             .OnDelete(DeleteBehavior.Cascade);
-            
+
     }
 }

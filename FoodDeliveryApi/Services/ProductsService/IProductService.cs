@@ -11,8 +11,10 @@ namespace FoodDeliveryApi.Services.ProductsService
     public interface IProductService
     {
         Task<ServiceResponse<List<GetProductDto>>> GetProducts(Guid shopId);
+        Task<ServiceResponse<GetProductDto>> GetProductById(Guid shopId, Guid productId);
         Task<ServiceResponse<GetProductDto>> AddProduct(Guid shopId, AddProductDto product);
         Task<ServiceResponse<GetProductDto>> AddProductById(Guid shopId, Guid productId);
+        Task<ServiceResponse<List<GetProductDto>>> UpdateProduct(Guid shopId, Guid productId, UpdateProductDto product);
         Task<ServiceResponse<List<GetProductDto>>> RemoveProduct(Guid shopId, Guid productId);
     }
 }
