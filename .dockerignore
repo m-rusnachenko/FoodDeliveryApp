@@ -1,0 +1,13 @@
+# Ignore builds
+**/bin
+**/obj
+
+# Ignore IDE config files
+.vs
+.vscode
+
+# Ignore old database
+**/*.db
+
+# Ignore appsettings for development
+**/*.Development.json

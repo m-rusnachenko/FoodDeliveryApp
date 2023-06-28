@@ -8,6 +8,8 @@ global using FoodDeliveryApi.Services.UserService;
 
 global using Microsoft.EntityFrameworkCore;
 global using AutoMapper;
+using System.Security.Claims;
+using FoodDeliveryApi.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +18,7 @@ builder.Services.AddDbContext<FoodDeliveryDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("MsSql_Somee"));
     // options.UseSqlite("Data Source=food-delivery-app.db");
-    options.EnableSensitiveDataLogging(true);
+    // options.EnableSensitiveDataLogging(true);
 });
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
@@ -35,11 +37,12 @@ builder.Services.AddAuthentication("CookieAuth")
         config.ExpireTimeSpan = TimeSpan.FromMinutes(60);
         config.SlidingExpiration = true;
     });
+
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("Admin", policy => policy.RequireClaim("Admin"));
-    options.AddPolicy("Manager", policy => policy.RequireClaim("Manager"));
-    options.AddPolicy("User", policy => policy.RequireClaim("User"));
+    options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("Manager", policy => policy.RequireRole("Manager", "Admin"));
+    options.AddPolicy("Customer", policy => policy.RequireRole("Customer", "Manager", "Admin"));
 });
 
 builder.Services.AddLogging(loggingBuilder => {
@@ -51,7 +54,10 @@ builder.Services.AddLogging(loggingBuilder => {
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c => {
+    c.SwaggerDoc("v1", new() { Title = "FoodDeliveryApi", Version = "v1" });
+    c.OperationFilter<AuthorizeCheckOperationFilter>();
+});
 
 var app = builder.Build();
 
@@ -69,6 +75,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapGet("/", (HttpContext ctx) => ctx.Response.Redirect("/swagger"));
+app.MapGet("/", (HttpContext ctx) => ctx.Response.Redirect("/swagger")).AllowAnonymous();
 
 app.Run();

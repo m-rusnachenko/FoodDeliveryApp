@@ -2,6 +2,7 @@ using AutoMapper;
 using FoodDeliveryApi.Dtos.Shop;
 using FoodDeliveryApi.Services.ShopService;
 using FoodDeliveryApi.Services.UserService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FoodDeliveryApi.Controllers
@@ -21,6 +22,7 @@ namespace FoodDeliveryApi.Controllers
             _userService = userService;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<List<GetShopDto>>> GetShops()
         {
@@ -28,6 +30,7 @@ namespace FoodDeliveryApi.Controllers
             return Ok(shops);
         }
 
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<ActionResult<GetShopDto>> GetShopById(Guid id)
         {
@@ -37,6 +40,7 @@ namespace FoodDeliveryApi.Controllers
             return Ok(shop);
         }
 
+        [Authorize(Policy = "Manager")]
         [HttpPost]
         public async Task<ActionResult<GetShopDto>> CreateShop(AddShopDto shop)
         {
@@ -44,6 +48,7 @@ namespace FoodDeliveryApi.Controllers
             return CreatedAtAction(nameof(GetShopById), new {id = createdShop.Data!.Id}, createdShop);
         }
 
+        [Authorize(Policy = "Manager")]
         [HttpPut("{shopId}")]
         public async Task<ActionResult<GetShopDto>> UpdateShop(Guid shopId, UpdateShopDto shop)
         {
@@ -53,6 +58,7 @@ namespace FoodDeliveryApi.Controllers
             return Ok(updatedShop);
         }
 
+        [Authorize(Policy = "Manager")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<GetShopDto>> DeleteShop(Guid id)
         {
@@ -62,10 +68,21 @@ namespace FoodDeliveryApi.Controllers
             return Ok(deletedShop);
         }
 
+        [Authorize(Policy = "Manager")]
         [HttpPatch("{shopId}/managers/{userId}")]
         public async Task<ActionResult<GetShopDto>> AddManager(Guid shopId, Guid userId)
         {
             var shop = await _shopService.AddManager(shopId, userId);
+            if (shop.Data is null)
+                return BadRequest(shop);
+            return Ok(shop);
+        }
+
+        [Authorize(Policy = "Manager")]
+        [HttpDelete("{shopId}/managers/{userId}")]
+        public async Task<ActionResult<GetShopDto>> RemoveManager(Guid shopId, Guid userId)
+        {
+            var shop = await _shopService.RemoveManager(shopId, userId);
             if (shop.Data is null)
                 return BadRequest(shop);
             return Ok(shop);

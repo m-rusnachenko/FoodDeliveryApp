@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FoodDeliveryApi.Dtos.Product;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FoodDeliveryApi.Controllers
@@ -22,12 +23,14 @@ namespace FoodDeliveryApi.Controllers
             _mapper = mapper;
         }
 
+        [AllowAnonymous]
         [HttpGet("{shopId}/products")]
         public async Task<ActionResult<List<GetProductDto>>> GetProducts(Guid shopId)
         {
             return Ok(await _productService.GetProducts(shopId));
         }
-
+        
+        [AllowAnonymous]
         [HttpGet("{shopId}/products/{productId}")]
         public async Task<ActionResult<GetProductDto>> GetProductById(Guid shopId, Guid productId)
         {
@@ -39,6 +42,7 @@ namespace FoodDeliveryApi.Controllers
             return Ok(response);
         }
 
+        [Authorize(Policy = "Manager")]
         [HttpPost("{shopId}/products")]
         public async Task<ActionResult<GetProductDto>> AddProduct(Guid shopId, AddProductDto product)
         {
@@ -50,6 +54,7 @@ namespace FoodDeliveryApi.Controllers
             return Ok(response);
         }
 
+        [Authorize(Policy = "Manager")]
         [HttpPost("{shopId}/products/{productId}")]
         public async Task<ActionResult<GetProductDto>> AddProductById(Guid shopId, Guid productId)
         {
@@ -61,6 +66,7 @@ namespace FoodDeliveryApi.Controllers
             return Ok(response);
         }
 
+        [Authorize(Policy = "Manager")]
         [HttpDelete("{shopId}/products/{productId}")]
         public async Task<ActionResult<List<GetProductDto>>> RemoveProduct(Guid shopId, Guid productId)
         {
@@ -72,6 +78,7 @@ namespace FoodDeliveryApi.Controllers
             return Ok(response);
         }
 
+        [Authorize(Policy = "Manager")]
         [HttpPut("{shopId}/products/{productId}")]
         public async Task<ActionResult<GetProductDto>> UpdateProduct(Guid shopId, Guid productId, UpdateProductDto product)
         {

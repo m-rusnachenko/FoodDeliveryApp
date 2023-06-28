@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FoodDeliveryApi.Dtos.Order;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FoodDeliveryApi.Controllers;
@@ -18,6 +19,7 @@ public class OrderController : ControllerBase
         _orderService = orderService;
     }
 
+    [Authorize(Policy = "Manager")]
     [HttpGet("shop/{shopId}")]
     public async Task<IActionResult> GetShopOrders(Guid shopId)
     {
@@ -30,6 +32,7 @@ public class OrderController : ControllerBase
         return Ok(response);
     }
 
+    [Authorize(Policy = "Customer")]
     [HttpGet("user/{userId}")]
     public async Task<IActionResult> GetUserOrders(Guid userId)
     {
@@ -42,6 +45,7 @@ public class OrderController : ControllerBase
         return Ok(response);
     }
 
+    [Authorize(Policy = "Customer")]
     [HttpPost]
     public async Task<IActionResult> CreateOrder(AddOrderDto order)
     {
@@ -54,6 +58,7 @@ public class OrderController : ControllerBase
         return Ok(response);
     }
 
+    [Authorize(Policy = "Manager")]
     [HttpPatch("{id}/status")]
     public async Task<IActionResult> UpdateOrderStatus(Guid id)
     {
@@ -66,6 +71,7 @@ public class OrderController : ControllerBase
         return Ok(response);
     }
 
+    [Authorize(Policy = "Customer")]
     [HttpPatch("{id}/cancel")]
     public async Task<IActionResult> CancelOrder(Guid id)
     {
@@ -78,6 +84,7 @@ public class OrderController : ControllerBase
         return Ok(response);
     }
 
+    [Authorize(Policy = "Manager")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteOrder(Guid id)
     {

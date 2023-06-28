@@ -1,8 +1,10 @@
+using System.Security.Claims;
 using System.Threading.Tasks;
 using FoodDeliveryApi.Dtos.User;
 using FoodDeliveryApi.Services.AuthService;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FoodDeliveryApi.Controllers;
@@ -31,17 +33,35 @@ public class AuthController : ControllerBase
     }
     
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromForm] string email, [FromForm] string password)
+    public async Task<ActionResult> Login([FromForm] string email, [FromForm] string password)
     {
         var response = await _authService.Login(email, password);
-        if (!response.Success || response.Data is null)
+        if (!response.Success || response.Principal is null)
         {
             return BadRequest(response);
         }
-        await HttpContext.SignInAsync("CookieAuth", response.Data);
-        return Ok(response);
+        // HttpContext.SignInAsync("CookieAuth", response.Data);
+        // Call SignInAsync and recive the response
+        await HttpContext.SignInAsync(
+            "CookieAuth",
+            response.Principal,
+            new AuthenticationProperties
+            {
+                IsPersistent = true,
+                ExpiresUtc = DateTime.UtcNow.AddMinutes(60)
+            });
+
+        return Ok(response.User);
     }
     
+    [Authorize(Policy = "Manager")]
+    [HttpGet("user")]
+    public IActionResult GetUser()
+    {
+        var user = HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
+        return Ok(user ?? "User not found");
+    }
+
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {

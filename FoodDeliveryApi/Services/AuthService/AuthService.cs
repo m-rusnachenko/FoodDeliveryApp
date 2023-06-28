@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using AutoMapper;
 using FoodDeliveryApi.Data;
+using FoodDeliveryApi.Dtos.AuthResponse;
 using FoodDeliveryApi.Dtos.User;
 using FoodDeliveryApi.Models;
 using FoodDeliveryApi.Services.UserService;
@@ -29,13 +30,13 @@ public class AuthService : IAuthService
         return await _userService.CreateUser(addUser);
     }
 
-    public async Task<ServiceResponse<ClaimsPrincipal>> Login(string email, string password)
+    public async Task<AuthResponse> Login(string email, string password)
     {
-        var serviceResponse = new ServiceResponse<ClaimsPrincipal>();
+        var serviceResponse = new AuthResponse();
         var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Email == email);
         if (user is null || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
         {
-            return new ServiceResponse<ClaimsPrincipal>
+            return new AuthResponse
             {
                 Success = false,
                 Message = "Invalid credentials."
@@ -45,12 +46,16 @@ public class AuthService : IAuthService
         var claims = new List<Claim>()
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.FullName),
             new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.Role, user.Role.ToString())
         };
         var userIdentity = new ClaimsIdentity(claims, "CookieAuth");
         var userPrincipal = new ClaimsPrincipal(userIdentity);
-        serviceResponse.Data = userPrincipal;
+
+        serviceResponse.Principal = userPrincipal;
+        serviceResponse.User = _mapper.Map<GetUserDto>(user);
+        
         return serviceResponse;
     }
 }

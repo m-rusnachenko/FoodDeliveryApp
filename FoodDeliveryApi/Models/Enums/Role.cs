@@ -5,7 +5,7 @@ namespace FoodDeliveryApi.Models.Enums;
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum Role
 {
-    Admin,
-    Customer,
-    Manager
+    Customer = 1,
+    Manager = 2,
+    Admin = 3
 }

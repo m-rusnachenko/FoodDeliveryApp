@@ -1,6 +1,6 @@
 ﻿using FoodDeliveryApi.Dtos.Shop;
 using FoodDeliveryApi.Models;
-
+using FoodDeliveryApi.Models.Enums;
 
 namespace FoodDeliveryApi.Services.ShopService;
 
@@ -116,6 +116,11 @@ public class ShopService : IShopService
             serviceResponse.Message = "User is already a manager.";
             return serviceResponse;
         }
+
+        if (user.Role == Role.Customer)
+            user.Role = Role.Manager;
+
+        
         shop.Managers.Add(user);
         await _dbContext.SaveChangesAsync();
         // serviceResponse.Data = _mapper.Map<GetShopDto>(shop);
@@ -144,6 +149,23 @@ public class ShopService : IShopService
             serviceResponse.Message = "User not found.";
             return serviceResponse;
         }
+
+        if (!shop.Managers.Any(m => m.Id == userId))
+        {
+            serviceResponse.Success = false;
+            serviceResponse.Message = "User is not a manager.";
+            return serviceResponse;
+        }
+
+        if (shop.Managers.Count == 1)
+        {
+            serviceResponse.Success = false;
+            serviceResponse.Message = "Shop must have at least one manager.";
+            return serviceResponse;
+        }
+
+        if (user.Role != Role.Admin)
+            user.Role = Role.Customer;
 
         shop.Managers.Remove(user);
         await _dbContext.SaveChangesAsync();

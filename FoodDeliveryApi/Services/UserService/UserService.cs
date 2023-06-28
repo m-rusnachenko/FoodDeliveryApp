@@ -2,6 +2,7 @@
 using FoodDeliveryApi.Data;
 using FoodDeliveryApi.Dtos.User;
 using FoodDeliveryApi.Models;
+using FoodDeliveryApi.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace FoodDeliveryApi.Services.UserService;
@@ -104,4 +105,29 @@ public class UserService : IUserService
         return serviceResponse;
     }
 
+    public async Task<ServiceResponse<string>> ChangeUserRole(Guid userId, string role)
+    {
+        var serviceResponse = new ServiceResponse<string>();
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        if (user is null)
+        {
+            serviceResponse.Success = false;
+            serviceResponse.Message = "User not found.";
+            return serviceResponse;
+        }
+
+        // Parse the role string to Role enum
+        if (!Enum.TryParse(role, out Role roleEnum))
+        {
+            serviceResponse.Success = false;
+            serviceResponse.Message = "Invalid role.";
+            return serviceResponse;
+        }
+        user.Role = roleEnum;
+
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync();
+        serviceResponse.Data = role;
+        return serviceResponse;
+    }
 }

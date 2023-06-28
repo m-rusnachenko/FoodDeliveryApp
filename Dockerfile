@@ -4,8 +4,8 @@ WORKDIR /source
 COPY . .
 
 # Restore
-RUN dotnet restore "./FoodDeliveryApi/FoodDeliveryApi.csproj" --disable-parallel
-RUN dotnet publish "./FoodDeliveryApi/FoodDeliveryApi.csproj" -c Release -o /app --no-restore
+# RUN dotnet restore "./FoodDeliveryApi/FoodDeliveryApi.csproj" --disable-parallel &&
+RUN dotnet restore "./FoodDeliveryApi/FoodDeliveryApi.csproj" --disable-parallel && dotnet publish "./FoodDeliveryApi/FoodDeliveryApi.csproj" -c Release -o /app --no-restore
 
 # Service stage
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS service
