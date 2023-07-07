@@ -33,7 +33,7 @@ public class AuthController : ControllerBase
     }
     
     [HttpPost("login")]
-    public async Task<ActionResult> Login([FromForm] string email, [FromForm] string password)
+    public async Task<ActionResult> Login(string email, string password)
     {
         var response = await _authService.Login(email, password);
         if (!response.Success || response.Principal is null)
