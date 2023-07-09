@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using FoodDeliveryApi.Dtos.Order;
 using Microsoft.AspNetCore.Authorization;
@@ -49,6 +50,7 @@ public class OrderController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateOrder(AddOrderDto order)
     {
+        order.UserId = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value!);
         var response = await _orderService.CreateOrder(order);
         if (!response.Success)
         {
