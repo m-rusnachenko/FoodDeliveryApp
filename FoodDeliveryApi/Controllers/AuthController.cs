@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 using FoodDeliveryApi.Dtos.User;
+using FoodDeliveryApi.Models;
 using FoodDeliveryApi.Services.AuthService;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -54,12 +55,17 @@ public class AuthController : ControllerBase
         return Ok(response.User);
     }
     
-    [Authorize(Policy = "Manager")]
+    [Authorize]
     [HttpGet("user")]
-    public IActionResult GetUser()
+    public async Task<ActionResult<ServiceResponse<GetUserDto>>> GetUser()
     {
-        var user = HttpContext.User.FindFirst(ClaimTypes.Role)?.Value;
-        return Ok(user ?? "User not found");
+        var response = await _authService.GetUser(User);
+        if (!response.Success)
+        {
+            return BadRequest(response);
+        }
+
+        return Ok(response);
     }
 
     [HttpPost("logout")]

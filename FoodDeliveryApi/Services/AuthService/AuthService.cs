@@ -58,4 +58,20 @@ public class AuthService : IAuthService
         
         return serviceResponse;
     }
+
+    public async Task<ServiceResponse<GetUserDto>> GetUser(ClaimsPrincipal user)
+    {
+        var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+        var serviceResponse = new ServiceResponse<GetUserDto>();
+        var userFromDb = await _context.Users.FirstOrDefaultAsync(u => u.Id == Guid.Parse(userId));
+        if (userFromDb is null)
+        {
+            serviceResponse.Success = false;
+            serviceResponse.Message = "User not found.";
+            return serviceResponse;
+        }
+
+        serviceResponse.Data = _mapper.Map<GetUserDto>(userFromDb);
+        return serviceResponse;
+    }
 }

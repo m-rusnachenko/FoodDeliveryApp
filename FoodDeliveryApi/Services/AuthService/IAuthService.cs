@@ -11,4 +11,5 @@ public interface IAuthService
 {
     Task<ServiceResponse<GetUserDto>> Register(AddUserDto addUser);
     Task<AuthResponse> Login(string email, string password);
+    Task<ServiceResponse<GetUserDto>> GetUser(ClaimsPrincipal user);
 }
